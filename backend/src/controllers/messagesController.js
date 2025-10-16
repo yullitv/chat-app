@@ -1,14 +1,15 @@
 const Message = require('../models/Message');
-const { getRandomQuote } = require('../utils/quotableClient');
+const { getRandomQuote } = require('../utils/zenQuotesClient');
 const { broadcastNewMessage } = require('../socket');
 
 // GET messages by chat
 async function getMessages(req, res) {
   try {
     const { chatId } = req.params;
-    const msgs = await Message.find({ chatId }).sort({ createdAt: 1 });
-    res.json(msgs);
+    const messages = await Message.find({ chatId }).sort({ createdAt: 1 });
+    res.json(messages);
   } catch (err) {
+    console.error('Error fetching messages:', err);
     res.status(500).json({ error: 'Failed to fetch messages' });
   }
 }
@@ -19,20 +20,37 @@ async function sendMessage(req, res) {
     const { chatId } = req.params;
     const { text } = req.body;
 
-    const userMsg = new Message({ chatId, text, sender: 'user' });
-    await userMsg.save();
-    broadcastNewMessage(userMsg);
+    // Зберігаємо повідомлення користувача
+    const userMsg = await Message.create({
+      chatId,
+      text,
+      sender: 'user',
+      createdAt: new Date(),
+    });
 
-    // bot reply after 3s
+    // Відправляємо одразу користувацьке повідомлення через socket
+    broadcastNewMessage(userMsg);
+    res.json(userMsg);
+
+    // Через 3 секунди створюємо авто-відповідь від бота
     setTimeout(async () => {
-      const quote = await getRandomQuote();
-      const botMsg = new Message({ chatId, text: quote, sender: 'bot' });
-      await botMsg.save();
-      broadcastNewMessage(botMsg);
+      try {
+        const quote = await getRandomQuote();
+        const botMsg = await Message.create({
+          chatId,
+          text: quote,
+          sender: 'bot',
+          createdAt: new Date(),
+        });
+
+        broadcastNewMessage(botMsg);
+      } catch (botErr) {
+        console.error('Auto-response error:', botErr.message);
+      }
     }, 3000);
 
-    res.json(userMsg);
   } catch (err) {
+    console.error('Error sending message:', err);
     res.status(500).json({ error: 'Failed to send message' });
   }
 }
@@ -45,6 +63,7 @@ async function updateMessage(req, res) {
     const msg = await Message.findByIdAndUpdate(id, { text }, { new: true });
     res.json(msg);
   } catch (err) {
+    console.error('Error updating message:', err);
     res.status(500).json({ error: 'Failed to update message' });
   }
 }

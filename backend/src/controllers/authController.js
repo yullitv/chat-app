@@ -1,14 +1,15 @@
 const User = require('../models/User');
 
-// Контролер для поточного користувача
+// Поточний користувач
 exports.getCurrentUser = (req, res) => {
   if (!req.user) {
-    return res.status(401).json({ message: 'Not logged in' });
+    // тепер просто повертаємо user: null замість 401
+    return res.json({ user: null });
   }
-  res.json(req.user);
+  res.json({ user: req.user });
 };
 
-// Контролер для логаута
+// Логаут
 exports.logoutUser = (req, res) => {
   req.logout(() => {
     res.json({ message: 'Logged out successfully' });
