@@ -1,0 +1,22 @@
+.wrapper {
+  display: flex;
+  height: 100vh;
+  background: #f9f9f9;
+  color: #111;
+  font-family: system-ui, sans-serif;
+}
+
+.sidebar {
+  width: 340px;
+  background: #fff;
+  border-right: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+}
+
+.chatArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #fefefe;
+}

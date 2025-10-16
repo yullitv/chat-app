@@ -1,0 +1,47 @@
+.item {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.item:hover {
+  background: #f6f8ff;
+}
+
+.active {
+  background: #eef2ff;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #d1d5db;
+  flex-shrink: 0;
+}
+
+.info {
+  flex: 1;
+  margin-left: 10px;
+  min-width: 0;
+}
+
+.name {
+  font-weight: 600;
+}
+
+.preview {
+  font-size: 13px;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.actions {
+  display: flex;
+  gap: 4px;
+}

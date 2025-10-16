@@ -1,0 +1,87 @@
+.topbar {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #d9d9d9;
+}
+.right {
+  margin-left: auto;
+}
+
+.searchRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+.liveToggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-text-muted);
+}
+
+.header {
+  padding: 10px 16px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+.list {
+  overflow: auto;
+}
+
+.item {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--color-border);
+  cursor: pointer;
+}
+.item:hover {
+  background: #f6f8ff;
+}
+.active {
+  background: #eef2ff;
+}
+.itemAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #ddd;
+}
+.itemBody {
+  flex: 1;
+  min-width: 0;
+}
+.itemTitle {
+  font-weight: 600;
+}
+.itemSub {
+  color: var(--color-text-muted);
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.itemActions {
+  display: flex;
+  gap: 6px;
+}
+.danger {
+  background: var(--color-error);
+  border: 1px solid var(--color-error);
+  color: #fff;
+}
+.footer {
+  padding: 12px 16px;
+  border-top: 1px solid var(--color-border);
+  background: #fff;
+}
