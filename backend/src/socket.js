@@ -7,9 +7,9 @@ function setupSocket(server, allowedOrigins) {
     cors: {
       origin: allowedOrigins,
       credentials: true,
-      methods: ["GET", "POST"],
+      methods: ["GET", "POST", "PATCH"], // додано PATCH
     },
-    transports: ["websocket", "polling"], // для стабільного fallback
+    transports: ["websocket", "polling"], // fallback
   });
 
   io.on("connection", (socket) => {
@@ -26,11 +26,10 @@ function setupSocket(server, allowedOrigins) {
   });
 }
 
-// Трансляція нового повідомлення
+// --- трансляція нового повідомлення ---
 function broadcastNewMessage(msg) {
   if (!io) return;
 
-  // Перетворюємо ідентифікатори у рядки
   const payload = {
     ...(msg.toObject?.() || msg),
     chatId: String(msg.chatId),
@@ -47,4 +46,24 @@ function broadcastNewMessage(msg) {
   console.log("[SOCKET] broadcast newMessage ->", payload.chatId);
 }
 
-module.exports = { setupSocket, broadcastNewMessage };
+// --- трансляція оновленого повідомлення ---
+function broadcastMessageUpdated(msg) {
+  if (!io) return;
+
+  const payload = {
+    ...(msg.toObject?.() || msg),
+    chatId: String(msg.chatId),
+    _id: String(msg._id),
+  };
+
+  io.to(payload.chatId).emit("messageUpdated", payload);
+  io.emit("notification", {
+    type: "message_updated",
+    chatId: payload.chatId,
+    text: payload.text,
+  });
+
+  console.log("[SOCKET] broadcast messageUpdated ->", payload.chatId);
+}
+
+module.exports = { setupSocket, broadcastNewMessage, broadcastMessageUpdated };

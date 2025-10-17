@@ -1,0 +1,43 @@
+.row {
+  display: flex;
+  margin: 8px 0;
+}
+
+.left {
+  justify-content: flex-start;
+}
+
+.right {
+  justify-content: flex-end;
+}
+
+.bubble {
+  max-width: 60%;
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: #e5e7eb;
+}
+
+.bubble.right {
+  background: #dbeafe;
+}
+
+.text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.edit {
+  border: none;
+  background: transparent;
+  color: var(--color-primary);
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.time {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}

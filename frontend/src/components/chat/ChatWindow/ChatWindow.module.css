@@ -7,12 +7,29 @@
   background: #fff;
   font-weight: 700;
 }
+
+.searchBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--color-border);
+  background: #f9fafb;
+}
+
 .body {
-  height: calc(100vh - 56px - 76px);
+  height: calc(100vh - 56px - 76px - 52px);
   overflow: auto;
   padding: 16px;
   background: #fafafa;
 }
+
+.noResults {
+  color: var(--color-text-muted);
+  text-align: center;
+  margin-top: 20px;
+}
+
 .row {
   display: flex;
   margin: 8px 0;

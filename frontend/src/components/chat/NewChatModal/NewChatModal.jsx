@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Modal from "@/components/ui/Modal/Modal.jsx";
 import Input from "@/components/ui/Input/Input.jsx";
+import s from "./NewChatModal.module.css";
 
 export default function NewChatModal({ onClose, onCreate }) {
   const [firstName, setFirstName] = useState("");
@@ -18,8 +19,13 @@ export default function NewChatModal({ onClose, onCreate }) {
   };
 
   return (
-    <Modal title="Create new chat" onClose={onClose} onSubmit={handleSubmit}>
-      <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+    <Modal
+      title="Create new chat"
+      onClose={onClose}
+      onSubmit={handleSubmit}
+      submitText="Create"
+    >
+      <div className={s.modalBody}>
         <Input
           placeholder="First name"
           value={firstName}
@@ -30,7 +36,7 @@ export default function NewChatModal({ onClose, onCreate }) {
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
         />
-        {error && <p style={{ color: "red", fontSize: "14px" }}>{error}</p>}
+        {error && <p className={s.error}>{error}</p>}
       </div>
     </Modal>
   );

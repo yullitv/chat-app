@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import s from "./ChatWindow.module.css";
 import Input from "@/components/ui/Input/Input.jsx";
 import Button from "@/components/ui/Button/Button.jsx";
@@ -26,6 +26,14 @@ export default function ChatWindow({ chat, messages, onSend, onEditMessage }) {
   const [text, setText] = useState("");
   const [editing, setEditing] = useState(null);
   const [editText, setEditText] = useState("");
+  const [search, setSearch] = useState("");
+
+  // useMemo тепер викликається завжди — навіть якщо chat == null
+  const filteredMessages = useMemo(() => {
+    if (!search.trim()) return messages;
+    const q = search.toLowerCase();
+    return messages.filter((m) => m.text.toLowerCase().includes(q));
+  }, [messages, search]);
 
   if (!chat) return <div className={s.empty}>Select a chat</div>;
 
@@ -45,22 +53,44 @@ export default function ChatWindow({ chat, messages, onSend, onEditMessage }) {
   return (
     <section className="chat">
       <div className={s.header}>
-        {chat.firstName} {chat.lastName}
+        <div>
+          {chat.firstName} {chat.lastName}
+        </div>
       </div>
 
+      {/* Пошук у чаті */}
+      <div className={s.searchBar}>
+        <Input
+          placeholder="Search in chat..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        {search && (
+          <Button size="sm" onClick={() => setSearch("")}>
+            ✕
+          </Button>
+        )}
+      </div>
+
+      {/* Повідомлення */}
       <div className={s.body}>
-        {messages.map((m) => (
-          <Bubble
-            key={m._id}
-            m={m}
-            onEdit={(mm) => {
-              setEditing(mm);
-              setEditText(mm.text);
-            }}
-          />
-        ))}
+        {filteredMessages.length > 0 ? (
+          filteredMessages.map((m) => (
+            <Bubble
+              key={m._id}
+              m={m}
+              onEdit={(mm) => {
+                setEditing(mm);
+                setEditText(mm.text);
+              }}
+            />
+          ))
+        ) : (
+          <div className={s.noResults}>No messages found</div>
+        )}
       </div>
 
+      {/* Поле введення */}
       <div
         className={s.inputRow}
         onKeyDown={(e) => {

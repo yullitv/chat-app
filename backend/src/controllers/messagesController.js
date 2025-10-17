@@ -1,6 +1,6 @@
 const Message = require('../models/Message');
 const { getRandomQuote } = require('../utils/zenQuotesClient');
-const { broadcastNewMessage } = require('../socket');
+const { broadcastNewMessage, broadcastMessageUpdated } = require('../socket');
 
 // GET messages by chat
 async function getMessages(req, res) {
@@ -20,7 +20,6 @@ async function sendMessage(req, res) {
     const { chatId } = req.params;
     const { text } = req.body;
 
-    // Зберігаємо повідомлення користувача
     const userMsg = await Message.create({
       chatId,
       text,
@@ -28,11 +27,9 @@ async function sendMessage(req, res) {
       createdAt: new Date(),
     });
 
-    // Відправляємо одразу користувацьке повідомлення через socket
     broadcastNewMessage(userMsg);
     res.json(userMsg);
 
-    // Через 3 секунди створюємо авто-відповідь від бота
     setTimeout(async () => {
       try {
         const quote = await getRandomQuote();
@@ -42,13 +39,11 @@ async function sendMessage(req, res) {
           sender: 'bot',
           createdAt: new Date(),
         });
-
         broadcastNewMessage(botMsg);
       } catch (botErr) {
         console.error('Auto-response error:', botErr.message);
       }
     }, 3000);
-
   } catch (err) {
     console.error('Error sending message:', err);
     res.status(500).json({ error: 'Failed to send message' });
@@ -60,8 +55,19 @@ async function updateMessage(req, res) {
   try {
     const { id } = req.params;
     const { text } = req.body;
-    const msg = await Message.findByIdAndUpdate(id, { text }, { new: true });
-    res.json(msg);
+
+    const updated = await Message.findByIdAndUpdate(
+      id,
+      { text },
+      { new: true }
+    );
+
+    if (!updated) return res.status(404).json({ error: 'Message not found' });
+
+    // повідомляємо клієнтів про оновлення
+    broadcastMessageUpdated(updated);
+
+    res.json(updated);
   } catch (err) {
     console.error('Error updating message:', err);
     res.status(500).json({ error: 'Failed to update message' });
