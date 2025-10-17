@@ -30,7 +30,7 @@ export default function ChatWindow({ chat, messages, onSend, onEditMessage }) {
 
   const messagesEndRef = useRef(null);
 
-  // 🔽 автоскрол вниз при кожній зміні повідомлень
+  // Автоскрол вниз при кожній зміні повідомлень
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });

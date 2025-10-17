@@ -25,7 +25,7 @@ function setupSocket(server, allowedOrigins) {
       console.log(`Socket ${socket.id} joined chat ${chatId}`);
     });
 
-    // --- toggle live режим ---
+    // Toggle live режим ---
     socket.on("toggleLive", ({ enabled }) => {
       const prev = liveEnabled;
       liveEnabled = !!enabled;
@@ -43,7 +43,7 @@ function setupSocket(server, allowedOrigins) {
   });
 }
 
-// --- автоматичне надсилання повідомлень у випадковий чат ---
+// Автоматичне надсилання повідомлень у випадковий чат ---
 function startLive() {
   if (liveTimer) return;
   liveTimer = setInterval(async () => {
@@ -80,7 +80,7 @@ function stopLive() {
   }
 }
 
-// --- трансляція нового повідомлення ---
+// Трансляція нового повідомлення ---
 function broadcastNewMessage(msg) {
   if (!io) return;
   const payload = {
@@ -97,7 +97,7 @@ function broadcastNewMessage(msg) {
   console.log("[SOCKET] broadcast newMessage ->", payload.chatId);
 }
 
-// --- трансляція оновленого повідомлення ---
+// Трансляція оновленого повідомлення
 function broadcastMessageUpdated(msg) {
   if (!io) return;
   const payload = {

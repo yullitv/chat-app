@@ -11,7 +11,7 @@ const Chat = require('./src/models/Chat');
 const app = express();
 const server = http.createServer(app);
 
-// --- CORS ---
+// CORS
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
@@ -33,7 +33,7 @@ app.use(
 
 app.use(express.json());
 
-// --- Сесії для Passport ---
+// Сесії для Passport
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -49,15 +49,15 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// --- Passport стратегія ---
+// Passport стратегія
 require('./src/config/passport');
 
-// --- Роутери ---
+// Роутери
 app.use('/api/chats', require('./src/routes/chats'));
 app.use('/api/messages', require('./src/routes/messages'));
 app.use('/api/auth', require('./src/routes/auth'));
 
-// --- Функція для створення 3 базових чатів ---
+// Cтворення 3 базових чатів
 async function seedChats() {
   const count = await Chat.countDocuments();
   if (count >= 3) {
@@ -75,7 +75,7 @@ async function seedChats() {
   console.log("Predefined chats have been added to the database");
 }
 
-// --- Підключення до MongoDB ---
+// Підключення до MongoDB
 mongoose
   .connect(process.env.MONGO_URI)
   .then(async () => {

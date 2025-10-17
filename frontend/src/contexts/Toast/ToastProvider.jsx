@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { ToastContext } from "./ToastContext";
-import "@/styles/toast.css"; // стилі беремо з /styles/toast.css
+import "@/styles/toast.css";
 
 export default function ToastProvider({ children }) {
   const [toasts, setToasts] = useState([]);

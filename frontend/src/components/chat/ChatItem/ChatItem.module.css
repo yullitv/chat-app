@@ -67,7 +67,6 @@
   100% { transform: scale(1); opacity: 1; }
 }
 
-
 .actions {
   display: flex;
   gap: 4px;
