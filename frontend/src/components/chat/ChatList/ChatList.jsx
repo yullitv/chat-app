@@ -42,7 +42,12 @@ export default function ChatList({
           <input
             type="checkbox"
             checked={liveEnabled}
-            onChange={onToggleLive}
+            onChange={(e) => {
+              onToggleLive(e);
+              import("@/services/socket").then(({ default: socket }) =>
+                socket.emit("toggleLive", { enabled: e.target.checked })
+              );
+            }}
           />
           <span>Live</span>
         </label>

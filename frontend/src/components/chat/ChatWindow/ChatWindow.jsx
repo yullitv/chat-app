@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import s from "./ChatWindow.module.css";
 import Input from "@/components/ui/Input/Input.jsx";
 import Button from "@/components/ui/Button/Button.jsx";
@@ -28,7 +28,16 @@ export default function ChatWindow({ chat, messages, onSend, onEditMessage }) {
   const [editText, setEditText] = useState("");
   const [search, setSearch] = useState("");
 
-  // useMemo тепер викликається завжди — навіть якщо chat == null
+  const messagesEndRef = useRef(null);
+
+  // 🔽 автоскрол вниз при кожній зміні повідомлень
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
+
+  // Фільтрація повідомлень
   const filteredMessages = useMemo(() => {
     if (!search.trim()) return messages;
     const q = search.toLowerCase();
@@ -44,7 +53,7 @@ export default function ChatWindow({ chat, messages, onSend, onEditMessage }) {
   };
 
   const saveEdit = () => {
-    if (!editing) return;
+    if (!editing || !editText.trim()) return;
     onEditMessage(editing._id, editText.trim());
     setEditing(null);
     setEditText("");
@@ -52,6 +61,7 @@ export default function ChatWindow({ chat, messages, onSend, onEditMessage }) {
 
   return (
     <section className="chat">
+      {/* Заголовок */}
       <div className={s.header}>
         <div>
           {chat.firstName} {chat.lastName}
@@ -88,6 +98,8 @@ export default function ChatWindow({ chat, messages, onSend, onEditMessage }) {
         ) : (
           <div className={s.noResults}>No messages found</div>
         )}
+        {/* Якір для автоскролу */}
+        <div ref={messagesEndRef} />
       </div>
 
       {/* Поле введення */}

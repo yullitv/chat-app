@@ -15,6 +15,10 @@
   background: #eef2ff;
 }
 
+.unread {
+  background: #f0f7ff;
+}
+
 .avatar {
   width: 36px;
   height: 36px;
@@ -29,6 +33,12 @@
   min-width: 0;
 }
 
+.nameRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .name {
   font-weight: 600;
 }
@@ -40,6 +50,23 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.badge {
+  background: #4f46e5;
+  color: #fff;
+  border-radius: 10px;
+  padding: 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-left: 6px;
+  animation: pulse 0.5s ease;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.8); opacity: 0.6; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
 
 .actions {
   display: flex;
