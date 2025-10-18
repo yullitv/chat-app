@@ -13,7 +13,7 @@ import { useChatActions } from "@/hooks/useChatActions";
 import { useJoinChatRooms } from "@/hooks/useJoinChatRooms";
 import { normalizeId } from "@/utils/ids";
 import { useAuth } from "@/hooks/useAuth";
-import LoginPage from "../LoginPage/LoginPage.jsx";
+import Header from "@/components/layout/Header/Header.jsx";
 
 export default function MainPage() {
   const { user, loading } = useAuth();
@@ -22,15 +22,13 @@ export default function MainPage() {
   const [chats, setChats] = useState([]);
   const [activeChat, setActiveChat] = useState(null);
   const [messages, setMessages] = useState([]);
-
   const [isNewChatModalOpen, setIsNewChatModalOpen] = useState(false);
   const [editChat, setEditChat] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(null);
-
   const [searchTerm, setSearchTerm] = useState("");
   const [liveEnabled, setLiveEnabled] = useState(false);
 
-  // refs для актуальних значень у сокет-обробниках
+  // refs
   const activeChatIdRef = useRef(null);
   const chatsRef = useRef([]);
   const toastRef = useRef(toast);
@@ -46,7 +44,7 @@ export default function MainPage() {
     liveRef.current = liveEnabled;
   }, [liveEnabled]);
 
-  // підключення socket-подій
+  // sockets
   useChatSocket({
     setMessages,
     setChats,
@@ -57,7 +55,7 @@ export default function MainPage() {
     liveRef,
   });
 
-  // CRUD-екшени
+  // CRUD actions
   const {
     handleNewChat,
     handleEditChat,
@@ -66,7 +64,7 @@ export default function MainPage() {
     handleEditMessage,
   } = useChatActions({ setChats, setActiveChat, toast });
 
-  // завантаження чатів із пошуком
+  // load chats (with search)
   useEffect(() => {
     const t = setTimeout(() => {
       getChats(searchTerm)
@@ -89,10 +87,10 @@ export default function MainPage() {
     return () => clearTimeout(t);
   }, [searchTerm, toast]);
 
-  // приєднуємося до кімнат один раз
+  // join rooms once
   useJoinChatRooms({ chats, joinedChatsRef });
 
-  // завантаження повідомлень для активного чату
+  // load messages for active chat
   useEffect(() => {
     if (!activeChat) return;
     activeChatIdRef.current = activeChat._id;
@@ -101,12 +99,12 @@ export default function MainPage() {
       .catch(() => toast.push("Failed to load messages"));
   }, [activeChat, toast]);
 
-  // дублюємо join для активного (на випадок, якщо його не було в списку на момент mount)
+  // ensure join for active
   useEffect(() => {
     if (activeChat) socket.emit("joinChat", activeChat._id);
   }, [activeChat]);
 
-  // вибір чату
+  // select chat
   const handleSelectChat = (chat) => {
     setActiveChat(chat);
     setChats((prev) =>
@@ -118,17 +116,19 @@ export default function MainPage() {
     );
   };
 
-  // Live тумблер
+  // live toggle
   const handleToggleLive = (e) => {
     const enabled = e.target.checked;
     setLiveEnabled(enabled);
     socket.emit("toggleLive", { enabled });
-    setTimeout(() => {
-      toast.push(`Live mode ${enabled ? "is on" : "is off"}`);
-    }, 100);
+    setTimeout(() => toast.push(`Live mode ${enabled ? "is on" : "is off"}`), 100);
   };
 
-  // Logout
+  // auth
+  const handleLogin = () => {
+    window.location.href = "http://localhost:4000/api/auth/google";
+  };
+
   const handleLogout = async () => {
     await fetch("http://localhost:4000/api/auth/logout", {
       method: "GET",
@@ -138,69 +138,68 @@ export default function MainPage() {
   };
 
   if (loading) return <div className={s.loading}>Loading...</div>;
-  if (!user) return <LoginPage />;
 
   return (
     <div className={s.wrapper}>
-      <header className={s.header}>
-        <div className={s.user}>
-          👤 {user.firstName} {user.lastName}
+      <Header user={user} onLogin={handleLogin} onLogout={handleLogout} />
+
+      {user ? (
+        // 👇 головний рядковий контейнер
+        <div className={s.main}>
+          <aside className={s.sidebar}>
+            <ChatList
+              chats={chats}
+              activeId={activeChat?._id}
+              onSelect={handleSelectChat}
+              onNew={() => setIsNewChatModalOpen(true)}
+              onEdit={(chat) => setEditChat(chat)}
+              onDelete={(chat) => setConfirmDelete(chat)}
+              onSearch={setSearchTerm}
+              liveEnabled={liveEnabled}
+              onToggleLive={handleToggleLive}
+            />
+          </aside>
+
+          <section className={s.chatArea}>
+            <ChatWindow
+              chat={activeChat}
+              messages={messages}
+              onSend={(text) => handleSendMessage(activeChat, text)}
+              onEditMessage={handleEditMessage}
+            />
+          </section>
+
+          {isNewChatModalOpen && (
+            <NewChatModal
+              onClose={() => setIsNewChatModalOpen(false)}
+              onCreate={handleNewChat}
+            />
+          )}
+
+          {editChat && (
+            <EditChatModal
+              chat={editChat}
+              onClose={() => setEditChat(null)}
+              onSave={(data) => {
+                handleEditChat(editChat._id, data);
+                setEditChat(null);
+              }}
+            />
+          )}
+
+          {confirmDelete && (
+            <ConfirmDialog
+              message={`Delete chat with ${confirmDelete.firstName}?`}
+              onCancel={() => setConfirmDelete(null)}
+              onConfirm={() => {
+                handleDeleteChat(confirmDelete);
+                setConfirmDelete(null);
+              }}
+            />
+          )}
         </div>
-        <button className={s.logoutBtn} onClick={handleLogout}>
-          Logout
-        </button>
-      </header>
-
-      <aside className={s.sidebar}>
-        <ChatList
-          chats={chats}
-          activeId={activeChat?._id}
-          onSelect={handleSelectChat}
-          onNew={() => setIsNewChatModalOpen(true)}
-          onEdit={(chat) => setEditChat(chat)}
-          onDelete={(chat) => setConfirmDelete(chat)}
-          onSearch={setSearchTerm}
-          liveEnabled={liveEnabled}
-          onToggleLive={handleToggleLive}
-        />
-      </aside>
-
-      <section className={s.chatArea}>
-        <ChatWindow
-          chat={activeChat}
-          messages={messages}
-          onSend={(text) => handleSendMessage(activeChat, text)}
-          onEditMessage={handleEditMessage}
-        />
-      </section>
-
-      {isNewChatModalOpen && (
-        <NewChatModal
-          onClose={() => setIsNewChatModalOpen(false)}
-          onCreate={handleNewChat}
-        />
-      )}
-
-      {editChat && (
-        <EditChatModal
-          chat={editChat}
-          onClose={() => setEditChat(null)}
-          onSave={(data) => {
-            handleEditChat(editChat._id, data);
-            setEditChat(null);
-          }}
-        />
-      )}
-
-      {confirmDelete && (
-        <ConfirmDialog
-          message={`Delete chat with ${confirmDelete.firstName}?`}
-          onCancel={() => setConfirmDelete(null)}
-          onConfirm={() => {
-            handleDeleteChat(confirmDelete);
-            setConfirmDelete(null);
-          }}
-        />
+      ) : (
+        <div className={s.noAccess}>Please sign in to access chats.</div>
       )}
     </div>
   );
