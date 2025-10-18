@@ -1,11 +1,44 @@
 .wrapper {
   display: flex;
+  flex-direction: column;
   height: 100vh;
   background: #f9f9f9;
   color: #111;
   font-family: system-ui, sans-serif;
 }
 
+/* Верхня панель */
+.header {
+  height: 56px;
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+
+.user {
+  font-weight: 600;
+  color: #111827;
+}
+
+.logoutBtn {
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.logoutBtn:hover {
+  background: #dc2626;
+}
+
+/* Основна частина */
 .sidebar {
   width: 340px;
   background: #fff;
@@ -19,4 +52,14 @@
   display: flex;
   flex-direction: column;
   background: #fefefe;
+}
+
+/* Стан завантаження */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-size: 20px;
+  color: #6b7280;
 }

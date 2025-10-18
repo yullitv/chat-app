@@ -12,8 +12,11 @@ import { useChatSocket } from "@/hooks/useChatSocket";
 import { useChatActions } from "@/hooks/useChatActions";
 import { useJoinChatRooms } from "@/hooks/useJoinChatRooms";
 import { normalizeId } from "@/utils/ids";
+import { useAuth } from "@/hooks/useAuth";
+import LoginPage from "../LoginPage/LoginPage.jsx";
 
 export default function MainPage() {
+  const { user, loading } = useAuth();
   const toast = useToast();
 
   const [chats, setChats] = useState([]);
@@ -95,7 +98,7 @@ export default function MainPage() {
     activeChatIdRef.current = activeChat._id;
     getMessages(activeChat._id)
       .then((res) => setMessages(res.data))
-      .catch(() => toast.push("Failed to load message"));
+      .catch(() => toast.push("Failed to load messages"));
   }, [activeChat, toast]);
 
   // дублюємо join для активного (на випадок, якщо його не було в списку на момент mount)
@@ -125,8 +128,29 @@ export default function MainPage() {
     }, 100);
   };
 
+  // Logout
+  const handleLogout = async () => {
+    await fetch("http://localhost:4000/api/auth/logout", {
+      method: "GET",
+      credentials: "include",
+    });
+    window.location.reload();
+  };
+
+  if (loading) return <div className={s.loading}>Loading...</div>;
+  if (!user) return <LoginPage />;
+
   return (
     <div className={s.wrapper}>
+      <header className={s.header}>
+        <div className={s.user}>
+          👤 {user.firstName} {user.lastName}
+        </div>
+        <button className={s.logoutBtn} onClick={handleLogout}>
+          Logout
+        </button>
+      </header>
+
       <aside className={s.sidebar}>
         <ChatList
           chats={chats}

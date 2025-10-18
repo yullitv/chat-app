@@ -1,0 +1,55 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: #f9fafb;
+  font-family: system-ui, sans-serif;
+}
+
+.card {
+  background: #fff;
+  padding: 40px 50px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  width: 360px;
+}
+
+.title {
+  margin: 0 0 10px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.text {
+  margin-bottom: 20px;
+  color: #6b7280;
+  font-size: 15px;
+}
+
+.googleBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px;
+  background: #4285f4;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.googleBtn:hover {
+  background: #357ae8;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+}
