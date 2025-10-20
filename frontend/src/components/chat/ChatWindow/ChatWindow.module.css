@@ -1,3 +1,10 @@
+.chat {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 56px);
+  background: #fafafa;
+}
+
 .header {
   height: 56px;
   display: flex;
@@ -18,9 +25,13 @@
 }
 
 .body {
-  height: calc(100vh - 56px - 76px - 52px);
-  overflow: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow-y: auto;
   padding: 16px;
+  min-height: 0;
   background: #fafafa;
 }
 
@@ -66,18 +77,21 @@
   color: var(--color-text-muted);
   margin-top: 4px;
 }
+
 .inputRow {
-  height: 76px;
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 0 16px;
+  padding: 12px 16px;
   border-top: 1px solid var(--color-border);
   background: #fff;
+  flex-shrink: 0;
 }
+
 .empty {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex: 1;
   color: var(--color-text-muted);
 }

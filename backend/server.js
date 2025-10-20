@@ -37,8 +37,8 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      sameSite: "lax", // <-- критично
-      secure: false, // залишаємо false для HTTP
+      sameSite: "lax",
+      secure: false,
     },
   })
 );

@@ -144,7 +144,6 @@ export default function MainPage() {
       <Header user={user} onLogin={handleLogin} onLogout={handleLogout} />
 
       {user ? (
-        // 👇 головний рядковий контейнер
         <div className={s.main}>
           <aside className={s.sidebar}>
             <ChatList

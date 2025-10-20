@@ -8,6 +8,20 @@
   padding: 0 20px;
 }
 
+/* Група для авторизованого користувача */
+.loggedIn {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Текст привітання */
+.greeting {
+  font-size: 15px;
+  color: #111827;
+  font-weight: 500;
+}
+
 /* Кнопка logout */
 .logoutBtn {
   background: #ef4444;

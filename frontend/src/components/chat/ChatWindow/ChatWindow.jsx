@@ -27,10 +27,9 @@ export default function ChatWindow({ chat, messages, onSend, onEditMessage }) {
   const [editing, setEditing] = useState(null);
   const [editText, setEditText] = useState("");
   const [search, setSearch] = useState("");
-
   const messagesEndRef = useRef(null);
 
-  // Автоскрол вниз при кожній зміні повідомлень
+  // Автоскрол вниз при зміні повідомлень
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -60,15 +59,13 @@ export default function ChatWindow({ chat, messages, onSend, onEditMessage }) {
   };
 
   return (
-    <section className="chat">
-      {/* Заголовок */}
+    <section className={s.chat}>
       <div className={s.header}>
         <div>
           {chat.firstName} {chat.lastName}
         </div>
       </div>
 
-      {/* Пошук у чаті */}
       <div className={s.searchBar}>
         <Input
           placeholder="Search in chat..."
@@ -82,7 +79,6 @@ export default function ChatWindow({ chat, messages, onSend, onEditMessage }) {
         )}
       </div>
 
-      {/* Повідомлення */}
       <div className={s.body}>
         {filteredMessages.length > 0 ? (
           filteredMessages.map((m) => (
@@ -98,11 +94,9 @@ export default function ChatWindow({ chat, messages, onSend, onEditMessage }) {
         ) : (
           <div className={s.noResults}>No messages found</div>
         )}
-        {/* Якір для автоскролу */}
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Поле введення */}
       <div
         className={s.inputRow}
         onKeyDown={(e) => {

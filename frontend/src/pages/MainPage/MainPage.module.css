@@ -1,20 +1,18 @@
 .wrapper {
   display: flex;
-  flex-direction: column; /* header зверху */
+  flex-direction: column;
   height: 100vh;
   background: #f9f9f9;
   color: #111;
   font-family: system-ui, sans-serif;
 }
 
-/* 👇 головний контейнер під хедером — у ряд */
 .main {
   display: flex;
   flex: 1;
-  min-height: 0; /* щоб працював overflow у дочірніх */
+  min-height: 0;
 }
 
-/* ліва колонка */
 .sidebar {
   width: 340px;
   background: #fff;
@@ -23,16 +21,16 @@
   flex-direction: column;
 }
 
-/* права область */
 .chatArea {
   flex: 1;
   display: flex;
   flex-direction: column;
   background: #fefefe;
-  min-width: 0; /* важливо для коректних переносів всередині */
+  overflow-y: auto;
+  min-height: 0;
 }
 
-/* стани */
+
 .loading {
   display: flex;
   align-items: center;

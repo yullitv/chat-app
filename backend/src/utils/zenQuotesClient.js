@@ -2,8 +2,7 @@ const axios = require("axios");
 
 let quoteCache = [];
 
-//Отримує одну випадкову цитату. Якщо кеш порожній — оновлює його пачкою з 10 цитат.
-
+//Отримуємо одну випадкову цитату. Якщо кеш порожній — оновлюємо його пачкою з 10 цитат.
 async function getRandomQuote() {
   try {
     if (quoteCache.length === 0) {
