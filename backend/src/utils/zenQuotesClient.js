@@ -2,11 +2,11 @@ const axios = require("axios");
 
 let quoteCache = [];
 
-//Отримуємо одну випадкову цитату. Якщо кеш порожній — оновлюємо його пачкою з 10 цитат.
+// Отримуємо одну випадкову цитату. Якщо кеш порожній — оновлюємо його пачкою з 10 цитат.
 async function getRandomQuote() {
   try {
     if (quoteCache.length === 0) {
-      axios.get(`${import.meta.env.VITE_API_URL}/auth/current`, { withCredentials: true })
+      const res = await axios.get("https://zenquotes.io/api/quotes");
       quoteCache = res.data.map((q) => `"${q.q}" — ${q.a}`);
       console.log(`[Quotes] Cached ${quoteCache.length} quotes`);
     }
