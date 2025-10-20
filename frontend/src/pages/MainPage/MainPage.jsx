@@ -121,19 +121,23 @@ export default function MainPage() {
     const enabled = e.target.checked;
     setLiveEnabled(enabled);
     socket.emit("toggleLive", { enabled });
-    setTimeout(() => toast.push(`Live mode ${enabled ? "is on" : "is off"}`), 100);
+    setTimeout(
+      () => toast.push(`Live mode ${enabled ? "is on" : "is off"}`),
+      100
+    );
   };
 
   // auth
   const handleLogin = () => {
-    window.location.href = "http://localhost:4000/api/auth/google";
+    window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
   };
 
   const handleLogout = async () => {
-    await fetch("http://localhost:4000/api/auth/logout", {
+    await fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
       method: "GET",
       credentials: "include",
     });
+
     window.location.reload();
   };
 

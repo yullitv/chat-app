@@ -6,7 +6,7 @@ let quoteCache = [];
 async function getRandomQuote() {
   try {
     if (quoteCache.length === 0) {
-      const res = await axios.get("https://zenquotes.io/api/quotes");
+      axios.get(`${import.meta.env.VITE_API_URL}/auth/current`, { withCredentials: true })
       quoteCache = res.data.map((q) => `"${q.q}" — ${q.a}`);
       console.log(`[Quotes] Cached ${quoteCache.length} quotes`);
     }
