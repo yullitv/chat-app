@@ -11,7 +11,7 @@ const Chat = require("./src/models/Chat");
 const app = express();
 const server = http.createServer(app);
 
-// ===== Довіряємо проксі (потрібно для Render HTTPS cookies) =====
+// ===== Render HTTPS fix =====
 app.set("trust proxy", 1);
 
 // ===== CORS =====
@@ -24,14 +24,7 @@ const allowedOrigins = [
 
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        console.warn("Blocked by CORS:", origin);
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: allowedOrigins,
     credentials: true,
   })
 );
@@ -39,17 +32,16 @@ app.use(
 app.use(express.json());
 
 // ===== Session (Google Auth) =====
-const isProd = process.env.NODE_ENV === "production";
-
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    proxy: true,
     cookie: {
       httpOnly: true,
-      sameSite: isProd ? "none" : "lax",
-      secure: isProd, // потрібне для HTTPS
+      secure: true, // Render HTTPS
+      sameSite: "none", // дозволяє міждоменний доступ
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 днів
     },
   })
