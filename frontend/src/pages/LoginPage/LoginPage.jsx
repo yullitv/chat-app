@@ -2,8 +2,10 @@ import React from "react";
 import s from "./LoginPage.module.css";
 
 export default function LoginPage() {
+  const API_BASE = import.meta.env.VITE_API_URL.replace(/\/api\/?$/, "");
+
   const handleLogin = () => {
-    window.location.href = "http://localhost:4000/api/auth/google";
+    window.location.href = `${API_BASE}/api/auth/google`;
   };
 
   return (

@@ -11,13 +11,16 @@ const Chat = require("./src/models/Chat");
 const app = express();
 const server = http.createServer(app);
 
+// ===== Довіряємо проксі (потрібно для Render HTTPS cookies) =====
+app.set("trust proxy", 1);
+
 // ===== CORS =====
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
   "https://chat-app-1-ikae.onrender.com",
   process.env.FRONTEND_URL,
-];
+].filter(Boolean);
 
 app.use(
   cors({
@@ -36,14 +39,18 @@ app.use(
 app.use(express.json());
 
 // ===== Session (Google Auth) =====
+const isProd = process.env.NODE_ENV === "production";
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
-      sameSite: "none", // дозволяє кукі між різними доменами
-      secure: true, // потрібне для HTTPS на Render
+      httpOnly: true,
+      sameSite: isProd ? "none" : "lax",
+      secure: isProd, // потрібне для HTTPS
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 днів
     },
   })
 );
@@ -85,7 +92,6 @@ mongoose
 
     await seedChats();
 
-    // Підключення Socket.io
     setupSocket(server, allowedOrigins);
 
     const PORT = process.env.PORT || 4000;
