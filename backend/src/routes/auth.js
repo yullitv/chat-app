@@ -11,9 +11,12 @@ router.get(
 // Callback після авторизації Google
 router.get(
   '/google/callback',
-  passport.authenticate('google', { failureRedirect: '/login', session: true }),
+  passport.authenticate('google', {
+    failureRedirect: process.env.FRONTEND_URL, // редірект при невдачі
+    session: true,
+  }),
   (req, res) => {
-    // Редіректимо користувача на фронтенд після успішного логіну
+    // Успішний логін — редіректимо на фронтенд
     res.redirect(process.env.FRONTEND_URL);
   }
 );
