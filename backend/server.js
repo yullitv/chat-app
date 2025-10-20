@@ -11,7 +11,7 @@ const Chat = require("./src/models/Chat");
 const app = express();
 const server = http.createServer(app);
 
-// CORS
+// ===== CORS =====
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
@@ -21,22 +21,29 @@ const allowedOrigins = [
 
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.warn("Blocked by CORS:", origin);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
 
 app.use(express.json());
 
-// Сесії для Passport
+// ===== Session (Google Auth) =====
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
-      sameSite: "lax",
-      secure: false,
+      sameSite: "none", // дозволяє кукі між різними доменами
+      secure: true, // потрібне для HTTPS на Render
     },
   })
 );
@@ -44,15 +51,15 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Passport стратегія
+// ===== Passport Config =====
 require("./src/config/passport");
 
-// Роутери
+// ===== Routes =====
 app.use("/api/chats", require("./src/routes/chats"));
 app.use("/api/messages", require("./src/routes/messages"));
 app.use("/api/auth", require("./src/routes/auth"));
 
-// Створення базових чатів
+// ===== Seed Initial Chats =====
 async function seedChats() {
   const count = await Chat.countDocuments();
   if (count >= 3) {
@@ -70,7 +77,7 @@ async function seedChats() {
   console.log("Predefined chats have been added to the database");
 }
 
-// Підключення до MongoDB
+// ===== Connect to MongoDB =====
 mongoose
   .connect(process.env.MONGO_URI)
   .then(async () => {
@@ -78,6 +85,7 @@ mongoose
 
     await seedChats();
 
+    // Підключення Socket.io
     setupSocket(server, allowedOrigins);
 
     const PORT = process.env.PORT || 4000;
