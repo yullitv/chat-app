@@ -24,7 +24,14 @@ const allowedOrigins = [
 
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.warn("❌ Blocked by CORS:", origin);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
@@ -32,6 +39,8 @@ app.use(
 app.use(express.json());
 
 // ===== Session (Google Auth) =====
+const isProd = process.env.NODE_ENV === "production";
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -40,8 +49,8 @@ app.use(
     proxy: true,
     cookie: {
       httpOnly: true,
-      secure: true, // Render HTTPS
-      sameSite: "none", // дозволяє міждоменний доступ
+      secure: isProd, // Render працює по HTTPS
+      sameSite: isProd ? "none" : "lax", // дозволяє міждоменні куки
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 днів
     },
   })
@@ -58,6 +67,11 @@ app.use("/api/chats", require("./src/routes/chats"));
 app.use("/api/messages", require("./src/routes/messages"));
 app.use("/api/auth", require("./src/routes/auth"));
 
+// ===== Default root route =====
+app.get("/", (req, res) => {
+  res.send("✅ Chat App backend is running on Render!");
+});
+
 // ===== Seed Initial Chats =====
 async function seedChats() {
   const count = await Chat.countDocuments();
@@ -73,20 +87,20 @@ async function seedChats() {
   ];
 
   await Chat.insertMany(predefinedChats);
-  console.log("Predefined chats have been added to the database");
+  console.log("✅ Predefined chats have been added to the database");
 }
 
 // ===== Connect to MongoDB =====
 mongoose
   .connect(process.env.MONGO_URI)
   .then(async () => {
-    console.log("MongoDB connected");
+    console.log("✅ MongoDB connected");
 
     await seedChats();
 
     setupSocket(server, allowedOrigins);
 
     const PORT = process.env.PORT || 4000;
-    server.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
+    server.listen(PORT, () => console.log(`🚀 Server listening on port ${PORT}`));
   })
-  .catch((err) => console.error("MongoDB connection error:", err));
+  .catch((err) => console.error("❌ MongoDB connection error:", err));
