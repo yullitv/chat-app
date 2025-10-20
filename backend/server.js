@@ -12,12 +12,17 @@ const app = express();
 const server = http.createServer(app);
 
 // CORS
-const allowedOrigins = ["http://localhost:5173", "http://localhost:3000"];
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  process.env.FRONTEND_URL,
+  "https://chat-app-1-ikae.onrender.com",
+];
 
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (!origin || allowedOrigins.some((url) => origin.startsWith(url))) {
         callback(null, true);
       } else {
         console.warn("Blocked by CORS:", origin);
@@ -54,7 +59,7 @@ app.use("/api/chats", require("./src/routes/chats"));
 app.use("/api/messages", require("./src/routes/messages"));
 app.use("/api/auth", require("./src/routes/auth"));
 
-// Cтворення 3 базових чатів
+// Створення базових чатів
 async function seedChats() {
   const count = await Chat.countDocuments();
   if (count >= 3) {
@@ -78,10 +83,8 @@ mongoose
   .then(async () => {
     console.log("MongoDB connected");
 
-    // Додаємо 3 базові чати, якщо ще немає
     await seedChats();
 
-    // Запускаємо Socket.io
     setupSocket(server, allowedOrigins);
 
     const PORT = process.env.PORT || 4000;
