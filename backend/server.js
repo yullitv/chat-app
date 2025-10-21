@@ -38,7 +38,6 @@ app.use(
   })
 );
 
-
 app.use(express.json());
 
 // ===== Session (Google Auth) =====
@@ -104,8 +103,10 @@ mongoose
     setupSocket(server, allowedOrigins);
 
     const PORT = process.env.PORT || 4000;
-    server.listen(PORT, "0.0.0.0", () => {
-      console.log(`🚀 Server listening on port ${PORT}`);
+    server.listen(PORT, () => {
+      console.log(
+        `🚀 Server is running and listening on Render-assigned port: ${PORT}`
+      );
       console.log("🌍 Allowed origins:", allowedOrigins);
     });
   })
