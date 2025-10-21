@@ -48,15 +48,16 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    proxy: true,
+    proxy: true, // ⚠️ обов’язково для Render
     cookie: {
       httpOnly: true,
-      secure: isProd, // Render працює по HTTPS
-      sameSite: isProd ? "none" : "lax", // дозволяє міждоменні куки
+      secure: true,      // ✅ завжди true на Render
+      sameSite: "none",  // ✅ інакше Chrome Mobile блокує
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 днів
     },
   })
 );
+
 
 app.use(passport.initialize());
 app.use(passport.session());

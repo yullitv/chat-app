@@ -12,14 +12,15 @@ router.get(
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    failureRedirect: process.env.FRONTEND_URL,
+    failureRedirect: `${process.env.FRONTEND_URL}/login`,
     session: true,
   }),
   (req, res) => {
-    console.log("✅ Google auth success for:", req.user?.email || req.user?.firstName);
-    res.redirect(`${process.env.FRONTEND_URL}`);
+    console.log("✅ Google auth success for:", req.user?.email);
+    res.redirect(process.env.FRONTEND_URL);
   }
 );
+
 
 // Отримати поточного користувача
 router.get("/current", getCurrentUser);
