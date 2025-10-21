@@ -28,7 +28,7 @@ app.use(
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        console.warn("❌ Blocked by CORS:", origin);
+        console.warn("Blocked by CORS:", origin);
         callback(new Error("Not allowed by CORS"));
       }
     },
@@ -48,12 +48,12 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    proxy: true, // ⚠️ обов’язково для Render
+    proxy: true,
     cookie: {
       httpOnly: true,
-      secure: true,      // ✅ завжди true на Render
-      sameSite: "none",  // ✅ інакше Chrome Mobile блокує
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 днів
+      secure: true,
+      sameSite: "none",
+      maxAge: 1000 * 60 * 60 * 24 * 7,
     },
   })
 );
@@ -72,7 +72,7 @@ app.use("/api/auth", require("./src/routes/auth"));
 
 // ===== Default root route =====
 app.get("/", (req, res) => {
-  res.send("✅ Chat App backend is running on Render!");
+  res.send("Chat App backend is running on Render!");
 });
 
 // ===== Seed Initial Chats =====
@@ -90,14 +90,14 @@ async function seedChats() {
   ];
 
   await Chat.insertMany(predefinedChats);
-  console.log("✅ Predefined chats have been added to the database");
+  console.log("Predefined chats have been added to the database");
 }
 
 // ===== Connect to MongoDB =====
 mongoose
   .connect(process.env.MONGO_URI)
   .then(async () => {
-    console.log("✅ MongoDB connected");
+    console.log("MongoDB connected");
 
     await seedChats();
 
@@ -106,9 +106,9 @@ mongoose
     const PORT = process.env.PORT || 4000;
     server.listen(PORT, () => {
       console.log(
-        `🚀 Server is running and listening on Render-assigned port: ${PORT}`
+        `Server is running and listening on Render-assigned port: ${PORT}`
       );
-      console.log("🌍 Allowed origins:", allowedOrigins);
+      console.log("Allowed origins:", allowedOrigins);
     });
   })
-  .catch((err) => console.error("❌ MongoDB connection error:", err));
+  .catch((err) => console.error("MongoDB connection error:", err));

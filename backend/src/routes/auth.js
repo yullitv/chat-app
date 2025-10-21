@@ -16,7 +16,7 @@ router.get(
     session: true,
   }),
   (req, res) => {
-    console.log("✅ Google auth success for:", req.user?.email);
+    console.log("Google auth success for:", req.user?.email);
     res.redirect(process.env.FRONTEND_URL);
   }
 );
