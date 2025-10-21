@@ -14,7 +14,7 @@ const server = http.createServer(app);
 // ===== Render HTTPS fix =====
 app.set("trust proxy", 1);
 
-// ===== CORS =====
+// ===== CORS (єдиний, правильний) =====
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
@@ -33,21 +33,12 @@ app.use(
       }
     },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
 app.use(express.json());
-
-// ===== Fix Render proxy & cookies =====
-app.set("trust proxy", 1);
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.header("Access-Control-Allow-Origin", process.env.FRONTEND_URL);
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.header("Access-Control-Allow-Headers", "Content-Type");
-  next();
-});
-
 
 // ===== Session (Google Auth) =====
 const isProd = process.env.NODE_ENV === "production";
@@ -112,6 +103,9 @@ mongoose
     setupSocket(server, allowedOrigins);
 
     const PORT = process.env.PORT || 4000;
-    server.listen(PORT, () => console.log(`🚀 Server listening on port ${PORT}`));
+    server.listen(PORT, "0.0.0.0", () => {
+      console.log(`🚀 Server listening on port ${PORT}`);
+      console.log("🌍 Allowed origins:", allowedOrigins);
+    });
   })
   .catch((err) => console.error("❌ MongoDB connection error:", err));
