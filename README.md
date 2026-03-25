@@ -1,4 +1,4 @@
-# 💬 Chat App — Test Task (Node.js + React)
+# 💬 Chat App (Node.js + React)
 
 **Full-stack chat application** with Google login, auto-responses, and real-time updates via Socket.io.  
 
@@ -7,7 +7,6 @@
 ## 🚀 Live Demo
 🔗 **Frontend:** [https://chat-app-1-ikae.onrender.com](https://chat-app-1-ikae.onrender.com)  
 🔗 **Backend API:** [https://chat-app-backend-bn32.onrender.com](https://chat-app-backend-bn32.onrender.com)  
-📦 **GitHub Repo:** [https://github.com/yullitv/chat-app](https://github.com/yullitv/chat-app)
 
 ---
 
